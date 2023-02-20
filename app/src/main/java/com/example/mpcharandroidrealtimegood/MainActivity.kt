@@ -90,12 +90,12 @@ class MainActivity : AppCompatActivity() {
                 data.addDataSet(set)
             }
 
-            data.addEntry(Entry((Math.random() * 120).toFloat() + 5f,set.entryCount.toFloat()),0)
+            data.addEntry(Entry(set.entryCount.toFloat(),(Math.random() * 120).toFloat() + 5f),0)
             mChart.notifyDataSetChanged()
             mChart.setVisibleXRange(6f,6f)
-            mChart.moveViewToX((data.entryCount - 2).toFloat())
+            mChart.moveViewToX((data.entryCount).toFloat() - 1)
 
-            if (set.entryCount >= 6) {
+            if (set.entryCount >= 10) {
                 set.removeFirst()
                 for (i in 0 until set.entryCount) {
                     val entryToChange = set.getEntryForIndex(i)
