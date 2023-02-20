@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudio10/MPCharAndroidRealTimeGood/app/src/main/res/drawable/font_echo_sounder.xml" value="0.1205" />
+        <entry key="..\:/AndroidStudio10/MPCharAndroidRealTimeGood/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1215" />
         <entry key="..\:/AndroidStudio10/MPCharAndroidRealTimeGood/app/src/main/res/layout/activity_main.xml" value="0.264" />
       </map>
     </option>

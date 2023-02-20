@@ -1,8 +1,10 @@
 package com.example.mpcharandroidrealtimegood
 
+import android.R
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.mpcharandroidrealtimegood.databinding.ActivityMainBinding
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
@@ -12,11 +14,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.coroutines.Runnable
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mChart:LineChart
+    private lateinit var mChart: LineChart
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,14 +69,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Thread(Runnable {
-            for(i in 0..99){
+            while (true) {
                 runOnUiThread(Runnable {
                     addEntry()
                 })
 
                 try {
                     Thread.sleep(600)
-                }catch (e:InterruptedException){
+                } catch (e: InterruptedException) {
 
                 }
             }
@@ -95,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             mChart.setVisibleXRange(6f,6f)
             mChart.moveViewToX((data.entryCount).toFloat() - 1)
 
-            if (set.entryCount >= 10) {
+            if (set.entryCount >= 7) {
                 set.removeFirst()
                 for (i in 0 until set.entryCount) {
                     val entryToChange = set.getEntryForIndex(i)
@@ -103,6 +107,40 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        /*val dataChart = mChart.getData();
+
+        if (dataChart != null) {
+
+            var set = dataChart.getDataSetByIndex(0);
+            if (set == null) {
+                set = createSet();
+                dataChart.addDataSet(set);
+            }
+
+            dataChart.addEntry(
+                Entry(
+                    set.entryCount.toFloat(),
+                    (Math.random() * 120).toFloat() + 5f
+                ), 0
+            )
+            dataChart.notifyDataChanged();
+
+            // let the chart know it's data has changed
+            mChart.notifyDataSetChanged();
+            // limit the number of visible entries
+            mChart.setVisibleXRangeMaximum(300f);
+            mChart.moveViewToX(dataChart.entryCount.toFloat());
+
+            if (set.entryCount == 9) {
+                set.removeFirst()
+                // change Indexes - move to beginning by 1
+                for (i in 0 until set.entryCount) {
+                    val entryToChange = set.getEntryForIndex(i)
+                    entryToChange.x = entryToChange.x - 1
+                }
+            }
+        }*/
     }
 
     private fun createSet ():LineDataSet{
@@ -118,7 +156,11 @@ class MainActivity : AppCompatActivity() {
         set.fillColor = ColorTemplate.getHoloBlue()
         set.highLightColor = Color.rgb(244,117,177)
         set.valueTextColor = Color.RED
+        set.color = Color.BLACK
         set.valueTextSize = 10f
+        set.setDrawFilled(true)
+        val drawable = ContextCompat.getDrawable(this, R.drawable.alert_dark_frame)
+        set.fillDrawable = drawable
         return set
     }
 }
