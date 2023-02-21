@@ -53,15 +53,18 @@ class MainActivity : AppCompatActivity() {
         l.form = Legend.LegendForm.LINE
         l.textColor = Color.WHITE
 
-        val xl = mChart.xAxis
-        xl.textColor = Color.WHITE
-        xl.setDrawGridLines(false)
-        xl.setAvoidFirstLastClipping(true)
+        mChart.xAxis.apply {
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+            setAvoidFirstLastClipping(true)
+            isEnabled = false
+        }
 
-        val yl = mChart.axisLeft
-        yl.textColor = Color.WHITE
-        yl.setAxisMaxValue(140f)
-        yl.setDrawGridLines(true)
+        mChart.axisLeft.apply {
+            textColor = Color.WHITE
+            axisMaximum = 11f
+            setDrawGridLines(false)
+        }
 
         val yl2 = mChart.axisRight
         yl2.isEnabled = false
@@ -95,14 +98,14 @@ class MainActivity : AppCompatActivity() {
                 data.addDataSet(set)
             }
 
-            data.addEntry(Entry(set.entryCount.toFloat(),(Math.random() * 120).toFloat() + 5f),0)
+            data.addEntry(Entry(set.entryCount.toFloat(),(1..10).random().toFloat()),0)
             mChart.notifyDataSetChanged()
             mChart.setVisibleXRange(6f,6f)
             mChart.moveViewToX((data.entryCount).toFloat() - 1)
 
-            if (set.entryCount >= 7) {
+            if (set.entryCount >= 10) {
                 set.removeFirst()
-                for (i in 0 until set.entryCount) {
+                for (i in 1 until set.entryCount - 1) {
                     val entryToChange = set.getEntryForIndex(i)
                     entryToChange.x = entryToChange.x - 1
                 }
@@ -146,23 +149,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun createSet ():LineDataSet{
         val set = LineDataSet(null,"SPL Db")
-        set.setDrawCircles(true)
-        set.cubicIntensity = 0.2f
-        set.axisDependency = YAxis.AxisDependency.LEFT
-        set.setColors(ColorTemplate.getHoloBlue())
-        set.setCircleColor(ColorTemplate.getHoloBlue())
-        set.lineWidth = 2f
-        set.circleSize = 4f
-        set.fillAlpha = 65
-        set.fillColor = ColorTemplate.getHoloBlue()
-        set.highLightColor = Color.rgb(244,117,177)
-        set.valueTextColor = Color.RED
-        set.color = Color.BLACK
-        set.valueTextSize = 10f
-        set.setDrawFilled(true)
+        set.apply {
+            setDrawCircles(true)
+            cubicIntensity = 0.2f
+            axisDependency = YAxis.AxisDependency.LEFT
+            setColors(ColorTemplate.getHoloBlue())
+            setCircleColor(ColorTemplate.getHoloBlue())
+            lineWidth = 2f
+            circleSize = 4f
+            fillAlpha = 65
+            fillColor = ColorTemplate.getHoloBlue()
+            highLightColor = Color.rgb(244,117,177)
+            valueTextSize = 10f
+            setDrawFilled(true)
+
+            color = Color.WHITE
+            valueTextColor = ContextCompat.getColor(applicationContext,R.color.black)
+            //setDrawValues(false)
+            isHighlightEnabled = true
+            setDrawHighlightIndicators(false)
+            setDrawCircles(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+        }
+
+
 
         //val drawable = ResourcesCompat.getDrawable(resources, R.drawable., null)
-        val drawable = ContextCompat.getDrawable(this, R.drawable.alert_dark_frame)
+        val drawable = ContextCompat.getDrawable(this, R.drawable.alert_dark_frame )
         set.fillDrawable = drawable
         return set
     }
