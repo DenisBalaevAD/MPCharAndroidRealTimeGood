@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.example.mpcharandroidrealtimegood.databinding.ActivityMainBinding
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
@@ -159,6 +160,8 @@ class MainActivity : AppCompatActivity() {
         set.color = Color.BLACK
         set.valueTextSize = 10f
         set.setDrawFilled(true)
+
+        //val drawable = ResourcesCompat.getDrawable(resources, R.drawable., null)
         val drawable = ContextCompat.getDrawable(this, R.drawable.alert_dark_frame)
         set.fillDrawable = drawable
         return set
