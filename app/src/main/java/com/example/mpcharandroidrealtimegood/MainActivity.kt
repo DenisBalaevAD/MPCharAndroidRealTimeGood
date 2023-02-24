@@ -2,19 +2,36 @@ package com.example.mpcharandroidrealtimegood
 
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.mpcharandroidrealtimegood.databinding.ActivityMainBinding
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.coroutines.Runnable
 
+class YAxisValueFormatter: ValueFormatter() {
+    override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+        val valueNew = if(value.toString().contains("-")) {
+            (value * -1).toString()
+        }else{
+            value.toString()
+        }
+
+        if (valueNew.contains(".")){
+            return valueNew.substring(0, valueNew.indexOf("."))
+        }
+        return valueNew
+    }
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,18 +54,18 @@ class MainActivity : AppCompatActivity() {
 
             isDragEnabled = true
             setScaleEnabled(true)
-            setDrawGridBackground(false)
+            setGridBackgroundColor(Color.GRAY)
+            setDrawGridBackground(true)
 
             setPinchZoom(true)
             setBackgroundColor(Color.LTGRAY)
-
         }
         val data = LineData()
         data.setValueTextColor(Color.WHITE)
 
         mChart.data = data
 
-        val l = mChart.legend.apply {
+        mChart.legend.apply {
             form = Legend.LegendForm.LINE
             textColor = Color.WHITE
         }
@@ -60,14 +77,33 @@ class MainActivity : AppCompatActivity() {
             isEnabled = false
         }
 
+
         mChart.axisLeft.apply {
-            textColor = Color.WHITE
-            axisMaximum = 11f
+            textColor = Color.BLUE
+            axisMaximum = 0f
+            axisMinimum = -11f
+            granularity = 0.5f
+
             setDrawGridLines(false)
+            valueFormatter = YAxisValueFormatter()
         }
 
         val yl2 = mChart.axisRight
         yl2.isEnabled = false
+
+        val data2 = mChart.data
+
+        var set = data2.getDataSetByIndex(0)
+        if(set == null){
+            set = createSet()
+            data2.addDataSet(set)
+        }
+
+        data2.addEntry(Entry(set.entryCount.toFloat() ,-1.5f),0)
+        data2.addEntry(Entry(set.entryCount.toFloat() ,-2f),0)
+        data2.addEntry(Entry(set.entryCount.toFloat() ,-2f),0)
+        data2.addEntry(Entry(set.entryCount.toFloat() ,-1f),0)
+        data2.addEntry(Entry(set.entryCount.toFloat() ,-2f),0)
     }
 
     override fun onResume() {
@@ -98,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                 data.addDataSet(set)
             }
 
-            data.addEntry(Entry(set.entryCount.toFloat() ,(1..10).random().toFloat()),0)
+            data.addEntry(Entry(set.entryCount.toFloat() ,(-11..-1).random().toFloat()),0)
             mChart.notifyDataSetChanged()
             mChart.setVisibleXRange(6f,6f)
             mChart.moveViewToX((data.entryCount).toFloat())
@@ -174,8 +210,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         //val drawable = ResourcesCompat.getDrawable(resources, R.drawable., null)
-        val drawable = ContextCompat.getDrawable(this, R.drawable.font)
-        set.fillDrawable = drawable
+        /*val drawable = ContextCompat.getDrawable(this, R.drawable.font)
+        set.fillDrawable = drawable*/
+        set.fillColor = Color.WHITE
         return set
     }
 }
