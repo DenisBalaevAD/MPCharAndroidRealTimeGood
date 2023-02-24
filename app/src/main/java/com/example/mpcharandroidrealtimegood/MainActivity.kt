@@ -2,6 +2,7 @@ package com.example.mpcharandroidrealtimegood
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.mpcharandroidrealtimegood.databinding.ActivityMainBinding
@@ -12,8 +13,6 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.coroutines.Runnable
@@ -77,15 +76,12 @@ class MainActivity : AppCompatActivity() {
             isEnabled = false
         }
 
-
         mChart.axisLeft.apply {
             textColor = Color.BLUE
-            axisMaximum = 0f
-            axisMinimum = -11f
-            granularity = 0.5f
-
+            axisMinimum = 0f
+            granularity = 1f
             setDrawGridLines(false)
-            valueFormatter = YAxisValueFormatter()
+            isGranularityEnabled = true
         }
 
         val yl2 = mChart.axisRight
@@ -99,16 +95,44 @@ class MainActivity : AppCompatActivity() {
             data2.addDataSet(set)
         }
 
-        data2.addEntry(Entry(set.entryCount.toFloat() ,-1.5f),0)
-        data2.addEntry(Entry(set.entryCount.toFloat() ,-2f),0)
-        data2.addEntry(Entry(set.entryCount.toFloat() ,-2f),0)
-        data2.addEntry(Entry(set.entryCount.toFloat() ,-1f),0)
-        data2.addEntry(Entry(set.entryCount.toFloat() ,-2f),0)
+        scaleSetting(10f)
+    }
+
+    @Suppress("SameParameterValue")
+    private fun scaleSetting (valueMaxAxisY: Float){
+        var isZero = false
+        var maxAxisY = valueMaxAxisY
+
+        val yAxisLabel = arrayListOf<String>()
+
+        while (!isZero) {
+            yAxisLabel.add(maxAxisY.toString())
+            maxAxisY-=0.5f
+            if (maxAxisY < 0f) isZero = true
+        }
+
+        mChart.axisLeft.apply {
+            axisMaximum = valueMaxAxisY
+            labelCount = yAxisLabel.count()
+        }
+
+        /*for (i in valueMaxAxisY.toInt() downTo 0){
+            yAxisLabel.add(i.toString())
+        }*/
+
+        yAxisLabel.forEach { Log.d("dt",it) }
+
+        mChart.axisLeft.valueFormatter = (object : ValueFormatter() {
+            override fun getAxisLabel(value: Float, axis: AxisBase): String {
+                return yAxisLabel[value.toInt()]
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
         Thread(Runnable {
+
             while (true) {
                 runOnUiThread(Runnable {
                     addEntry()
@@ -134,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                 data.addDataSet(set)
             }
 
-            data.addEntry(Entry(set.entryCount.toFloat() ,(-11..-1).random().toFloat()),0)
+            data.addEntry(Entry(set.entryCount.toFloat() ,(0..mChart.axisLeft.mAxisMaximum.toInt()).random().toFloat()),0)
             mChart.notifyDataSetChanged()
             mChart.setVisibleXRange(6f,6f)
             mChart.moveViewToX((data.entryCount).toFloat())
@@ -210,9 +234,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         //val drawable = ResourcesCompat.getDrawable(resources, R.drawable., null)
-        /*val drawable = ContextCompat.getDrawable(this, R.drawable.font)
-        set.fillDrawable = drawable*/
-        set.fillColor = Color.WHITE
+        val drawable = ContextCompat.getDrawable(this, R.drawable.font)
+        set.fillDrawable = drawable
         return set
     }
 }
